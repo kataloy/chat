@@ -1,5 +1,5 @@
-const { Op, Sequelize } = require('sequelize');
-const { promisify } = require("util");
+const { Op } = require('sequelize');
+const client = require('../../utils/redis');
 const { User, Message, Chat, sequelize } = require('../../models');
 
 class Chats {
@@ -39,9 +39,7 @@ class Chats {
     });
   }
 
-  async getChats(id, username, redisClient) {
-    const getAsync = promisify(redisClient.get).bind(redisClient);
-
+  async getChats(id, username) {
     let chatsFromSearch = [];
 
     if (username) {
@@ -71,7 +69,8 @@ class Chats {
             lastMessage: '',
           }
         }
-        const lastMessage = await getAsync(`Last message of ${chat.id}`);
+
+        const lastMessage = await client.get(`last_message_of:${chat.id}`);
 
         return {
           name: item.username,
@@ -108,7 +107,7 @@ class Chats {
         name = item.name;
       }
 
-      const lastMessage = await getAsync(`Last message of ${item.id}`);
+      const lastMessage = await client.get(`last_message_of:${item.id}`);
 
       return {
         name,

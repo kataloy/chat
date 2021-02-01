@@ -1,6 +1,6 @@
-const { promisify } = require("util");
 const { Op } = require('sequelize');
 const { verifyToken } = require('../../utils/token');
+const client = require('../../utils/redis');
 const { Chat, Message } = require('../../models');
 
 class Ws {
@@ -42,9 +42,7 @@ class Ws {
     return senderId;
   }
 
-  async sendPrivateMessage(senderId, chatId, userId, message, redisClient) {
-    const setAsync = promisify(redisClient.set).bind(redisClient);
-
+  async sendPrivateMessage(senderId, chatId, userId, message) {
     if (!chatId && !userId) {
       throw new Error('chatId or userId is required');
     }
@@ -78,7 +76,7 @@ class Ws {
       message,
     });
 
-    await setAsync(`Last message of ${msg.chatId}`, JSON.stringify(msg));
+    await client.set(`last_message_of:${msg.chatId}`, JSON.stringify(msg));
 
     const { participants } = await Chat.findOne({
       where: {
