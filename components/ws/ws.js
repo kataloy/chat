@@ -6,6 +6,11 @@ const { Chat, Message } = require('../../models');
 class Ws {
   clients = {};
 
+  /**
+   * Check authorization of socket
+   * @param socket {Object}
+   * @returns token {String}
+   */
   checkAuth(socket) {
     const { authorization } = socket.handshake.query;
 
@@ -19,6 +24,11 @@ class Ws {
     return token;
   }
 
+  /**
+   * Initialize socket
+   * @param socket {Object}
+   * @returns id of sending client {void|String}
+   */
   initSocket(socket) {
     let senderId;
     const token = this.checkAuth(socket)
@@ -42,6 +52,14 @@ class Ws {
     return senderId;
   }
 
+  /**
+   * Send private message from senderId with chatId or userId
+   * @param senderId {String}
+   * @param chatId {String}
+   * @param userId {String}
+   * @param message {String}
+   * @returns {Promise<void>}
+   */
   async sendPrivateMessage(senderId, chatId, userId, message) {
     if (!chatId && !userId) {
       throw new Error('chatId or userId is required');

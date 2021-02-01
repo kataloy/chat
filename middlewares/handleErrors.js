@@ -3,7 +3,7 @@ module.exports = async (ctx, next) => {
     await next();
   } catch (err) {
     ctx.status = err.status || 500;
-    ctx.body = ctx.status >= 500 ? 'Internal server error' : err.message; // нет кейса когда нет месседжа, хотя мб такое и невозможно
+    ctx.body = ctx.status >= 500 ? 'Internal server error' : err.message;
 
     ctx.app.emit('error', err, ctx);
   }

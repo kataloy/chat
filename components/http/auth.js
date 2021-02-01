@@ -5,8 +5,12 @@ const { User } = require('../../models');
 const { createToken } = require('../../utils/token');
 
 class Auth {
-  constructor() {}
-
+  /**
+   * Sign up with username and password
+   * @param username {String}
+   * @param password {String}
+   * @returns {Promise<{id: *, username: *}>}
+   */
   async signUp({ username, password }) {
     const user = await User.findOne({
       where: {
@@ -29,6 +33,12 @@ class Auth {
     }
   };
 
+  /**
+   * Sign in with username and password
+   * @param username {String}
+   * @param password {String}
+   * @returns {Promise<{token: (*)}>}
+   */
   async signIn({ username, password }) {
     const user = await User.findOne({
       where: {
@@ -44,6 +54,11 @@ class Auth {
     return { token: createToken(user.id) };
   };
 
+  /**
+   * Remove account with id
+   * @param id
+   * @returns {Promise<{ok: boolean}>}
+   */
   async removeAccount({ id }) {
     await User.update({
       isRemoved: true,

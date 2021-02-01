@@ -39,6 +39,12 @@ class Chats {
     });
   }
 
+  /**
+   * Get chats by id or username
+   * @param id {String}
+   * @param [username] {String}
+   * @returns {Promise<Chat[]>}
+   */
   async getChats(id, username) {
     let chatsFromSearch = [];
 
