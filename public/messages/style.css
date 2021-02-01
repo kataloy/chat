@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 300px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid #ddd;
+}
+
+.user {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.user img {
+  height: 65px;
+  border-radius: 100%;
+}
+
+.user p:first-child {
+  margin: 7px 0 4px 15px;
+  font-weight: 500;
+}
+
+.user p:last-child {
+  margin-left: 15px;
+  font-size: 14px;
+  color: #757575;
+}
+
+.user:hover {
+  cursor: pointer;
+}
+
+.dialog {
+  height: 100vh;
+  position: relative;
+  width: calc(100% - 301px);
+  background: #fff;
+}
+
+.dialog h3 {
+  font-weight: 500;
+  text-align: center;
+  line-height: 100vh;
+  color: #bbb6b6;
+}
+
+.dialog .message {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.dialog .message input {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+.dialog .message input:focus,
+.dialog .message input:active {
+  outline: 0;
+}
+
+.dialog .messages {
+  position: absolute;
+  bottom: 56px;
+}
