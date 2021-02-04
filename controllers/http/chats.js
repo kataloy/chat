@@ -7,6 +7,12 @@ module.exports = (router) => {
   });
 
   router.get('/chats', checkAuth, async (ctx) => {
-    ctx.body = await chats.getChats(ctx.state.user.id, ctx.query.username);
+    const { username } = ctx.query;
+
+    if (username) {
+      ctx.body = await chats.findChats(ctx.state.user, ctx.query);
+    } else {
+      ctx.body = await chats.getChats(ctx.state.user);
+    }
   });
 };

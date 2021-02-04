@@ -15,12 +15,28 @@
   border-bottom: 1px solid #ddd;
 }
 
+.userFieldInDialog {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
 .user img {
   height: 65px;
   border-radius: 100%;
 }
 
+.userFieldInDialog img {
+  height: 65px;
+  border-radius: 100%;
+}
+
 .user p:first-child {
+  margin: 7px 0 4px 15px;
+  font-weight: 500;
+}
+
+.userFieldInDialog p:first-child {
   margin: 7px 0 4px 15px;
   font-weight: 500;
 }
@@ -32,6 +48,10 @@
 }
 
 .user:hover {
+  cursor: pointer;
+}
+
+.userFieldInDialog:hover {
   cursor: pointer;
 }
 

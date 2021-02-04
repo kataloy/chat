@@ -1,0 +1,167 @@
+openapi: 3.0.3
+
+info:
+  title: Chat
+  description: Simple chat app
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:3000/api/v1'
+    description: Local
+
+tags:
+  - name: auth
+  - name: chat
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        chatId:
+          type: string
+        userId:
+          type: string
+        message:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+paths:
+  /auth/signup:
+    post:
+      summary: Sign Up
+      operationId: signUp
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: OK. User added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  id:
+                    type: string
+        400:
+          description: Validation error
+  /auth/signin:
+    post:
+      summary: Sign In
+      operationId: signIn
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Athorization error
+  /chats:
+    get:
+      summary: Get Chats
+      operationId: getChats
+      tags:
+        - chat
+      parameters:
+        - in: query
+          name: username
+          description: if providen then search for new chats
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully received chats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - name
+                    - lastMessage
+                  properties:
+                    name:
+                      type: string
+                    chatId:
+                      type: string
+                    userId:
+                      type: string
+                    lastMessage:
+                      $ref: '#/components/schemas/Message'
+        401:
+          description: Authorization error
+      security:
+        - bearerAuth: []
+  /chats/messages:
+    get:
+      summary: Get Messages
+      operationId: getMessages
+      tags:
+        - chat
+      parameters:
+        - in: query
+          name: chatId
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: Successfully received messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        401:
+          description: Authorization error
+      security:
+        - bearerAuth: []

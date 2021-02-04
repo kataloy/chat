@@ -53,23 +53,6 @@ class Auth {
 
     return { token: createToken(user.id) };
   };
-
-  /**
-   * Remove account with id
-   * @param id
-   * @returns {Promise<{ok: boolean}>}
-   */
-  async removeAccount({ id }) {
-    await User.update({
-      isRemoved: true,
-    }, {
-      where: {
-        id,
-      },
-    });
-
-    return { ok: true };
-  };
 }
 
 module.exports = new Auth();

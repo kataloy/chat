@@ -28,8 +28,4 @@ module.exports = (router) => {
     }
     ctx.body = await auth.signIn(ctx.request.body);
   });
-
-  router.delete('/auth/me', checkAuth, async (ctx) => {
-    ctx.body = await auth.removeAccount(ctx.state.user);
-  });
 };

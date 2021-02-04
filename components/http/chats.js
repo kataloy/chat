@@ -22,7 +22,7 @@ class Chats {
     const chat = await Chat.findOne({
       where: {
         [Op.and]: [
-          sequelize.where(sequelize.fn('cardinality', sequelize.col('participants')), 2),
+          //sequelize.where(sequelize.fn('cardinality', sequelize.col('participants')), 2),
           { participants: { [Op.contains]: [userId] } },
           { participants: { [Op.contains]: [id] } },
         ],
@@ -32,99 +32,93 @@ class Chats {
     if (!chat) return;
 
     return await Message.findAll({
-      where: {
-        chatId: chat.id,
-      },
+      where: { chatId: chat.id },
       order: [['createdAt', 'ASC']],
     });
   }
 
   /**
-   * Get chats by id or username
-   * @param id {String}
-   * @param [username] {String}
+   * Find new chats by username
+   * @param user {Object}
+   * @param [user.id] {String}
+   * @param params {Object}
+   * @param [params.username] {String}
    * @returns {Promise<Chat[]>}
    */
-  async getChats(id, username) {
-    let chatsFromSearch = [];
+  async findChats({ id }, { username }) {
+    const user = await User.findAll({
+      limit: 10,
+      where: {
+        username: {
+          [Op.iLike]: `%${username}%`,
+        },
+      },
+    });
 
-    if (username) {
-      const user = await User.findAll({
-        limit: 10,
+    const chatsByUsername =  await Promise.all(user.map(async item => {
+      const chat = await Chat.findOne({
         where: {
-          username: {
-            [Op.iLike]: `%${username}%`,
+          participants: {
+            [Op.contains]: [id, item.id],
           },
         },
+        order: [['updatedAt', 'DESC']],
       });
 
-      chatsFromSearch =  await Promise.all(user.map(async item => {
-        const chat = await Chat.findOne({
-          where: {
-            participants: {
-              [Op.contains]: [id, item.id],
-            },
-          },
-          order: [['updatedAt', 'DESC']],
-        });
-
-        if (!chat) {
-          return {
-            name: item.username,
-            userId: item.id,
-            lastMessage: '',
-          }
-        }
-
-        const lastMessage = await client.get(`last_message_of:${chat.id}`);
-
+      if (!chat) {
         return {
           name: item.username,
-          chatId: chat.id,
-          lastMessage: JSON.parse(lastMessage).message,
-          updatedAt: chat.updatedAt,
+          userId: item.id,
+          lastMessage: '',
         }
-      }));
-    }
+      }
 
+      const lastMessage = await client.get(`last_message_of:${chat.id}`);
+
+      return {
+        name: item.username,
+        chatId: chat.id,
+        lastMessage: lastMessage ? JSON.parse(lastMessage) : null,
+      };
+    }));
+
+    const ownChats = await this.getChats({ id });
+
+    return [...new Set([...chatsByUsername, ...ownChats].map(JSON.stringify))].map(JSON.parse);
+  }
+
+  /**
+   * Get own chats by id
+   * @param user {Object}
+   * @param user.id {String}
+   * @returns {Promise<Chat[]>}
+   */
+  async getChats({ id }) {
     const chats = await Chat.findAll({
       where: {
         participants: {
           [Op.contains]: [id],
         },
       },
-      order: [['updatedAt', 'DESC']],
     });
 
-    const existingChats =  await Promise.all(chats.map(async (item) => {
-      let user, name;
-
-      const participants = item.participants.filter(item => item !== id);
-
-      if (participants.length === 1) {
-        user = await User.findOne({
-          where: {
-            id: participants[0],
-          }
-        });
-
-        name = user.username;
-      } else {
-        name = item.name;
-      }
+    return await Promise.all(chats.map(async (item) => {
+      const user = await User.findOne({
+        where: {
+          id: item.participants.find(item => item !== id),
+        },
+        attributes: ['username']
+      });
 
       const lastMessage = await client.get(`last_message_of:${item.id}`);
 
       return {
-        name,
+        name: user.username,
         chatId: item.id,
-        lastMessage: JSON.parse(lastMessage).message,
-        updatedAt: item.updatedAt,
-      }
+        lastMessage: lastMessage ? JSON.parse(lastMessage) : null,
+      };
     }));
-
-    return [...new Set([...chatsFromSearch, ...existingChats].map(JSON.stringify))].map(JSON.parse);
   }
-}
+ }
 
 module.exports = new Chats();

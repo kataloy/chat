@@ -31,6 +31,7 @@ class Ws {
    */
   initSocket(socket) {
     let senderId;
+
     const token = this.checkAuth(socket)
 
     if (!token) return;
@@ -60,7 +61,7 @@ class Ws {
    * @param message {String}
    * @returns {Promise<void>}
    */
-  async sendPrivateMessage(senderId, chatId, userId, message) {
+  async sendMessage(senderId, chatId, userId, message) {
     if (!chatId && !userId) {
       throw new Error('chatId or userId is required');
     }
@@ -110,10 +111,6 @@ class Ws {
     ].forEach((client) => {
       client.emit('new private message', message);
     });
-  }
-
-  async sendGroupMessage() {
-
   }
 }
 

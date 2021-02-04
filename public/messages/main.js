@@ -10,7 +10,6 @@ let messageInput;
 let userField;
 let ulMessages;
 
-const USERNAME = localStorage.getItem('username');
 const TOKEN = localStorage.getItem('token');
 
 const headers = {
@@ -26,30 +25,28 @@ const socket = io('ws://localhost:3000', {
 const displayDialog = async ({ name, userId, chatId }) => {
   title.style = 'display:none';
 
-  if (messageInput && messageInput.parentNode) messageInput.parentNode.removeChild(messageInput);
-  if (userField && userField.parentNode) userField.parentNode.removeChild(userField);
-  if (ulMessages && ulMessages.parentNode) ulMessages.parentNode.removeChild(ulMessages);
+  if (messageInput) messageInput.parentNode.removeChild(messageInput);
+  if (userField) userField.parentNode.removeChild(userField);
+  if (ulMessages) ulMessages.parentNode.removeChild(ulMessages);
 
   userField = document.createElement('div');
   const nameField = document.createElement('div');
   const avatar = document.createElement('img');
   const username = document.createElement('p');
+  ulMessages = document.createElement('ul');
+  messageInput = document.createElement('input');
 
-  userField.className = 'user';
+  userField.className = 'userFieldInDialog';
   avatar.src = 'https://placedog.net/100/100';
   username.innerText = name;
+
+  messageInput.setAttribute('type', 'text');
+  messageInput.setAttribute('placeholder', 'Write a message...');
 
   userField.appendChild(avatar);
   nameField.appendChild(username);
   userField.appendChild(nameField);
   headerField.appendChild(userField);
-
-  ulMessages = document.createElement('ul');
-  messageInput = document.createElement('input');
-
-  messageInput.setAttribute('type', 'text');
-  messageInput.setAttribute('placeholder', 'Write a message...');
-
   messagesField.appendChild(ulMessages);
   messageField.appendChild(messageInput);
 
@@ -67,6 +64,8 @@ const displayDialog = async ({ name, userId, chatId }) => {
       chatId,
       message,
     });
+
+    await displayChats();
   };
 
   const { data } = await axios.get(`http://localhost:3000/api/v1/chats/messages`, {
@@ -91,7 +90,7 @@ const displayDialog = async ({ name, userId, chatId }) => {
 const removeElementsByClass = className => {
   const elements = document.getElementsByClassName(className);
 
-  while (elements.length > 0) {
+  while (elements.length) {
     elements[0].parentNode.removeChild(elements[0]);
   }
 }
@@ -106,7 +105,9 @@ const displayChats = async (username) => {
     },
   });
 
-  data.forEach(item => {
+  data
+    .sort((a, b) => Date.parse(b.lastMessage.createdAt) - Date.parse(a.lastMessage.createdAt))
+    .forEach(item => {
     const chat = document.createElement('div');
     const avatar = document.createElement('img');
     const user = document.createElement('div');
@@ -118,7 +119,7 @@ const displayChats = async (username) => {
     chat.onclick = async () => await displayDialog(item);
 
     name.innerText = item.name;
-    lastMessage.innerText = item.lastMessage ;
+    lastMessage.innerText = item.lastMessage.message || '';
     avatar.src = 'https://placedog.net/100/100';
 
     chat.appendChild(avatar);
@@ -130,6 +131,8 @@ const displayChats = async (username) => {
 };
 
 const searchInputHandler = async (username) => {
+  searchInput.value = '';
+
   await displayChats(username);
 
   const searchExitButton = document.createElement('input');
@@ -140,6 +143,7 @@ const searchInputHandler = async (username) => {
   searchField.appendChild(searchExitButton);
 
   searchExitButton.onclick = () => {
+    searchInput.value = '';
     displayChats();
   }
 };
