@@ -42,7 +42,7 @@ describe('auth', () => {
     const user = await User.findOne({
       where: {
         username: USERNAME,
-      }
+      },
     });
 
     expect(status).to.be.equal(200);
@@ -74,7 +74,7 @@ describe('auth', () => {
   });
 
   it('sign in with wrong password', async () => {
-    const wrongPassword = '123123'
+    const wrongPassword = '123123';
 
     const { status, body } = await request(app)
       .post('/api/v1/auth/signin')
@@ -112,7 +112,7 @@ describe('auth', () => {
     const user = await User.findOne({
       where: {
         username: USERNAME,
-      }
+      },
     });
 
     expect(status).to.be.equal(200);

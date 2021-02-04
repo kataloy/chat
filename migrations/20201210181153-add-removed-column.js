@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await queryInterface.addColumn('Users', 'isRemoved', {
@@ -8,5 +6,5 @@ module.exports = {
     });
   },
 
-  down: () => {}
+  down: () => {},
 };

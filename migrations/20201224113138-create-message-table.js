@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await queryInterface.createTable('Messages', {
@@ -25,7 +23,7 @@ module.exports = {
         allowNull: false,
       },
       createdAt: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
     });
 
@@ -39,13 +37,13 @@ module.exports = {
         type: DataTypes.ARRAY(DataTypes.STRING),
       },
       createdAt: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
       updatedAt: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
     });
   },
 
-  down: async () => {}
+  down: async () => {},
 };

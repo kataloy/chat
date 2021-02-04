@@ -1,11 +1,9 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await queryInterface.addColumn('Messages', 'updatedAt', {
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
     });
   },
 
-  down: () => {}
+  down: () => {},
 };

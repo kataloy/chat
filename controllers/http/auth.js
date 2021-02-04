@@ -1,5 +1,5 @@
-const checkAuth = require('../../middlewares/checkAuth');
 const { auth } = require('../../components/http');
+const { ValidationError } = require('../../errors/ValidationError');
 
 module.exports = (router) => {
   router.post('/auth/signup', async (ctx) => {

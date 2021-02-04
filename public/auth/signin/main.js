@@ -12,9 +12,8 @@ const handler = async () => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('username', username.value);
 
-    window.location.href = "../../messages/index.html";
+    window.location.href = '../../messages/index.html';
   } catch (err) {
-    // alert('Неверное имя пользователя или пароль!');
     alert(err.response ? err.response.data : err.message);
   }
 };

@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     chatId: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
     },
     userId: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
     },
     message: {
       type: DataTypes.STRING,

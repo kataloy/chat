@@ -1,10 +1,8 @@
 const chai = require('chai');
-const chaiHttp = require('chai-http');
-const io = require('socket.io-client')
-const app = require('../');
+const io = require('socket.io-client');
 const { Op } = require('sequelize');
 const auth = require('../components/http/auth');
-const { createToken} = require('../utils/token');
+const { createToken } = require('../utils/token');
 const { User, Message, Chat } = require('../models');
 
 const cleanup = async () => {
@@ -54,8 +52,8 @@ describe('io', () => {
 
     socket = io('ws://localhost:3000', {
       query: {
-        authorization: `bearer ${token}`
-      }
+        authorization: `bearer ${token}`,
+      },
     });
 
     socket.on('connect', () => {
@@ -89,9 +87,9 @@ describe('io', () => {
       const msg = await Message.findOne({
         where: {
           userId: user1.id,
-          chatId: chatId,
+          chatId,
           message: MESSAGE1,
-        }
+        },
       });
 
       expect(chat).to.be.not.equal(null);

@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     isRemoved: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
   });
 

@@ -1,19 +1,17 @@
-'use strict';
-
 const { Chat } = require('../models');
 
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await queryInterface.addColumn('Chats', '_participants', {
       type: DataTypes.ARRAY(DataTypes.UUID),
-      allowNull: true
+      allowNull: true,
     });
 
     const chats = await Chat.findAll();
 
     for (const chat of chats) {
       await chat.update({
-        _participants: chat.participants
+        _participants: chat.participants,
       });
     }
 
@@ -22,9 +20,9 @@ module.exports = {
 
     await queryInterface.changeColumn('Chats', 'participants', {
       type: DataTypes.ARRAY(DataTypes.UUID),
-      allowNull: false
-    })
+      allowNull: false,
+    });
   },
 
-  down: () => {}
+  down: () => {},
 };

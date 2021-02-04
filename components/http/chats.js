@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const client = require('../../utils/redis');
-const { User, Message, Chat, sequelize } = require('../../models');
+const { User, Message, Chat } = require('../../models');
 
 class Chats {
   /**
@@ -55,7 +55,7 @@ class Chats {
       },
     });
 
-    const chatsByUsername =  await Promise.all(user.map(async item => {
+    const chatsByUsername = await Promise.all(user.map(async (item) => {
       const chat = await Chat.findOne({
         where: {
           participants: {
@@ -70,7 +70,7 @@ class Chats {
           name: item.username,
           userId: item.id,
           lastMessage: '',
-        }
+        };
       }
 
       const lastMessage = await client.get(`last_message_of:${chat.id}`);
@@ -107,7 +107,7 @@ class Chats {
         where: {
           id: item.participants.find(item => item !== id),
         },
-        attributes: ['username']
+        attributes: ['username'],
       });
 
       const lastMessage = await client.get(`last_message_of:${item.id}`);
@@ -119,6 +119,6 @@ class Chats {
       };
     }));
   }
- }
+}
 
 module.exports = new Chats();

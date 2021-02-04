@@ -1,11 +1,9 @@
-'use strict';
-
-const {Message} = require('../models');
+const { Message } = require('../models');
 
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await Message.destroy({
-      where: {}
+      where: {},
     });
 
     await queryInterface.removeColumn('Messages', 'senderUserId');
@@ -14,35 +12,35 @@ module.exports = {
 
     await queryInterface.addColumn('Messages', 'chatId', {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
     });
 
     await queryInterface.addColumn('Messages', 'userId', {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
     });
 
     await queryInterface.createTable('Chats', {
       id: {
         type: DataTypes.UUID,
-        primaryKey: true
+        primaryKey: true,
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
       },
       participants: {
         type: DataTypes.JSONB,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
       updatedAt: {
-        type: DataTypes.DATE
-      }
+        type: DataTypes.DATE,
+      },
     });
   },
 
-  down: () => {}
+  down: () => {},
 };

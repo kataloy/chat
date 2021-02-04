@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, DataTypes) => {
     await queryInterface.changeColumn('Users', 'password', {
@@ -8,5 +6,5 @@ module.exports = {
     });
   },
 
-  down: () => {}
+  down: () => {},
 };

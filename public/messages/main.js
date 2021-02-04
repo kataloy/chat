@@ -22,6 +22,41 @@ const socket = io('ws://localhost:3000', {
   query: headers,
 });
 
+const displayChats = async (username) => {
+  removeElementsByClass('user');
+
+  const { data } = await axios.get('http://localhost:3000/api/v1/chats', {
+    headers,
+    params: {
+      username,
+    },
+  });
+
+  data
+    .sort((a, b) => Date.parse(b.lastMessage.createdAt) - Date.parse(a.lastMessage.createdAt))
+    .forEach(item => {
+      const chat = document.createElement('div');
+      const avatar = document.createElement('img');
+      const user = document.createElement('div');
+      const name = document.createElement('p');
+      const lastMessage = document.createElement('p');
+
+      chat.className = 'user';
+
+      chat.onclick = async () => await displayDialog(item);
+
+      name.innerText = item.name;
+      lastMessage.innerText = item.lastMessage.message || '';
+      avatar.src = 'https://placedog.net/100/100';
+
+      chat.appendChild(avatar);
+      user.appendChild(name);
+      user.appendChild(lastMessage);
+      chat.appendChild(user);
+      sidebar.appendChild(chat);
+    });
+};
+
 const displayDialog = async ({ name, userId, chatId }) => {
   title.style = 'display:none';
 
@@ -55,7 +90,7 @@ const displayDialog = async ({ name, userId, chatId }) => {
 
     const message = messageInput.value;
 
-    if (!message) return
+    if (!message) return;
 
     messageInput.value = '';
 
@@ -68,23 +103,23 @@ const displayDialog = async ({ name, userId, chatId }) => {
     await displayChats();
   };
 
-  const { data } = await axios.get(`http://localhost:3000/api/v1/chats/messages`, {
+  const { data } = await axios.get('http://localhost:3000/api/v1/chats/messages', {
     headers,
     params: {
       chatId,
       userId,
-    }
+    },
   });
 
-  if(!data) return;
+  if (!data) return;
 
   data.forEach(item => {
-      const { message } = item;
-      const liMessage = document.createElement('li');
+    const { message } = item;
+    const liMessage = document.createElement('li');
 
-      liMessage.innerHTML = `<div><h5>${message}</h5></div>`;
-      ulMessages.appendChild(liMessage);
-    });
+    liMessage.innerHTML = `<div><h5>${message}</h5></div>`;
+    ulMessages.appendChild(liMessage);
+  });
 };
 
 const removeElementsByClass = className => {
@@ -93,41 +128,6 @@ const removeElementsByClass = className => {
   while (elements.length) {
     elements[0].parentNode.removeChild(elements[0]);
   }
-}
-
-const displayChats = async (username) => {
-  removeElementsByClass('user');
-
-  const { data } = await axios.get('http://localhost:3000/api/v1/chats', {
-    headers,
-    params: {
-      username,
-    },
-  });
-
-  data
-    .sort((a, b) => Date.parse(b.lastMessage.createdAt) - Date.parse(a.lastMessage.createdAt))
-    .forEach(item => {
-    const chat = document.createElement('div');
-    const avatar = document.createElement('img');
-    const user = document.createElement('div');
-    const name = document.createElement('p');
-    const lastMessage = document.createElement('p');
-
-    chat.className = 'user';
-
-    chat.onclick = async () => await displayDialog(item);
-
-    name.innerText = item.name;
-    lastMessage.innerText = item.lastMessage.message || '';
-    avatar.src = 'https://placedog.net/100/100';
-
-    chat.appendChild(avatar);
-    user.appendChild(name);
-    user.appendChild(lastMessage);
-    chat.appendChild(user);
-    sidebar.appendChild(chat);
-  });
 };
 
 const searchInputHandler = async (username) => {
@@ -171,6 +171,6 @@ socket.on('new private message', message => {
   ulMessages.appendChild(liMessage);
 });
 
-socket.on("disconnect", (reason) => {
-  console.error("disconnect", reason);
+socket.on('disconnect', (reason) => {
+  console.error('disconnect', reason);
 });

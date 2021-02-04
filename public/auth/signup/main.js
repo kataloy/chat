@@ -23,11 +23,11 @@ loginButton.onclick = async () => {
     localStorage.setItem('username', data1.data.username);
     localStorage.setItem('token', data2.data.token);
 
-    window.location.href = "../../messages/index.html";
+    window.location.href = '../../messages/index.html';
   } catch (err) {
     console.log(err.message);
     if (err.message === 'Request failed with status code 400') {
-      alert('This username already exists!')
+      alert('This username already exists!');
     } else {
       alert(err.message);
     }

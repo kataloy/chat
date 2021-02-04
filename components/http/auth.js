@@ -1,5 +1,5 @@
 const sha256 = require('js-sha256');
-const { ValidationError, AuthorizationError} = require('../../errors');
+const { ValidationError, AuthorizationError } = require('../../errors');
 const { SALT } = require('../../config');
 const { User } = require('../../models');
 const { createToken } = require('../../utils/token');
@@ -15,7 +15,7 @@ class Auth {
     const user = await User.findOne({
       where: {
         username,
-      }
+      },
     });
 
     if (user) {
@@ -30,8 +30,8 @@ class Auth {
     return {
       username: record.username,
       id: record.id,
-    }
-  };
+    };
+  }
 
   /**
    * Sign in with username and password
@@ -44,7 +44,7 @@ class Auth {
       where: {
         username,
         password: sha256(`${SALT}${password}`),
-      }
+      },
     });
 
     if (!user) {
@@ -52,7 +52,7 @@ class Auth {
     }
 
     return { token: createToken(user.id) };
-  };
+  }
 }
 
 module.exports = new Auth();
